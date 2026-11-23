@@ -13,7 +13,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "migrate:up": "node-pg-migrate up --migrations-dir=./migrations",
-    "migrate:down": "node-pg-migrate down --migrations-dir=./migrations"
+    "migrate:down": "node-pg-migrate down --migrations-dir=./migrations",
+    "db:seed": "tsx src/db/seed.ts"
   },
   "keywords": [],
   "author": "",
