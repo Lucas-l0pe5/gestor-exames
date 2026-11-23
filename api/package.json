@@ -14,7 +14,7 @@
     "format:check": "prettier --check .",
     "migrate:up": "node-pg-migrate up --migrations-dir=./migrations",
     "migrate:down": "node-pg-migrate down --migrations-dir=./migrations",
-    "db:seed": "tsx src/db/seed.ts"
+    "db:seed": "docker exec -i gestor-exames-db psql -U gestor -d gestor_exames -f /seed.sql"
   },
   "keywords": [],
   "author": "",
