@@ -9,46 +9,46 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('exam_status_history', {
+  pgm.createTable("exam_status_history", {
     id: {
-      type: 'uuid',
+      type: "uuid",
       primaryKey: true,
-      default: pgm.func('gen_random_uuid()'),
+      default: pgm.func("gen_random_uuid()"),
     },
     exam_id: {
-      type: 'uuid',
+      type: "uuid",
       notNull: true,
-      references: 'exams',
-      onDelete: 'CASCADE',
+      references: "exams",
+      onDelete: "CASCADE",
     },
     from_status: {
-      type: 'varchar(20)',
+      type: "varchar(20)",
       notNull: false,
       check: "from_status IN ('RECEIVED', 'IN_ANALYSIS', 'REPORT_CHECKED', 'SENT')",
     },
     to_status: {
-      type: 'varchar(20)',
+      type: "varchar(20)",
       notNull: true,
       check: "to_status IN ('RECEIVED', 'IN_ANALYSIS', 'REPORT_CHECKED', 'SENT')",
     },
     changed_by: {
-      type: 'uuid',
+      type: "uuid",
       notNull: true,
-      references: 'users',
-      onDelete: 'RESTRICT',
+      references: "users",
+      onDelete: "RESTRICT",
     },
     changed_at: {
-      type: 'timestamptz',
+      type: "timestamptz",
       notNull: true,
-      default: pgm.func('now()'),
+      default: pgm.func("now()"),
     },
   });
 
-  pgm.addConstraint('exam_status_history', 'valid_status_transition', {
-    check: 'from_status IS NULL OR from_status != to_status',
+  pgm.addConstraint("exam_status_history", "valid_status_transition", {
+    check: "from_status IS NULL OR from_status != to_status",
   });
 
-  pgm.createIndex('exam_status_history', 'exam_id');
+  pgm.createIndex("exam_status_history", "exam_id");
 };
 
 /**
@@ -57,5 +57,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('exam_status_history');
+  pgm.dropTable("exam_status_history");
 };

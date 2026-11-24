@@ -6,14 +6,14 @@ This document summarizes the modeling decisions validated with domain-modeling f
 
 ## Migration 001: `users`
 
-| Column | Type | Constraints | Decision |
-|--------|------|-------------|----------|
-| `id` | UUID | PK, `gen_random_uuid()` | ✅ |
-| `name` | VARCHAR(255) | NOT NULL | ✅ |
-| `email` | VARCHAR(255) | NOT NULL, UNIQUE | ✅ |
-| `password_hash` | VARCHAR(255) | NOT NULL | ✅ |
-| `role` | VARCHAR(20) | NOT NULL, CHECK IN ('ATTENDANT', 'MANAGER') | ✅ |
-| `created_at` | TIMESTAMPTZ | NOT NULL, DEFAULT now() | ✅ |
+| Column          | Type         | Constraints                                 | Decision |
+| --------------- | ------------ | ------------------------------------------- | -------- |
+| `id`            | UUID         | PK, `gen_random_uuid()`                     | ✅       |
+| `name`          | VARCHAR(255) | NOT NULL                                    | ✅       |
+| `email`         | VARCHAR(255) | NOT NULL, UNIQUE                            | ✅       |
+| `password_hash` | VARCHAR(255) | NOT NULL                                    | ✅       |
+| `role`          | VARCHAR(20)  | NOT NULL, CHECK IN ('ATTENDANT', 'MANAGER') | ✅       |
+| `created_at`    | TIMESTAMPTZ  | NOT NULL, DEFAULT now()                     | ✅       |
 
 **Validation**: Aligned with PR. Role as CHECK constraint (not enum type) for simplicity and portability.
 
@@ -23,21 +23,21 @@ This document summarizes the modeling decisions validated with domain-modeling f
 
 ### `patients`
 
-| Column | Type | Constraints | Decision |
-|--------|------|-------------|----------|
-| `id` | UUID | PK, `gen_random_uuid()` | ✅ |
-| `name` | VARCHAR(255) | NOT NULL | ✅ |
-| `code` | VARCHAR(50) | NOT NULL, UNIQUE | ✅ (fictitious code per security rules) |
-| `created_at` | TIMESTAMPTZ | NOT NULL, DEFAULT now() | ✅ |
+| Column       | Type         | Constraints             | Decision                                |
+| ------------ | ------------ | ----------------------- | --------------------------------------- |
+| `id`         | UUID         | PK, `gen_random_uuid()` | ✅                                      |
+| `name`       | VARCHAR(255) | NOT NULL                | ✅                                      |
+| `code`       | VARCHAR(50)  | NOT NULL, UNIQUE        | ✅ (fictitious code per security rules) |
+| `created_at` | TIMESTAMPTZ  | NOT NULL, DEFAULT now() | ✅                                      |
 
 ### `exam_types`
 
-| Column | Type | Constraints | Decision |
-|--------|------|-------------|----------|
-| `id` | UUID | PK, `gen_random_uuid()` | ✅ |
-| `name` | VARCHAR(255) | NOT NULL | ✅ |
-| `sla_hours` | INTEGER | NOT NULL, CHECK > 0 | ✅ |
-| `created_at` | TIMESTAMPTZ | NOT NULL, DEFAULT now() | ✅ |
+| Column       | Type         | Constraints             | Decision |
+| ------------ | ------------ | ----------------------- | -------- |
+| `id`         | UUID         | PK, `gen_random_uuid()` | ✅       |
+| `name`       | VARCHAR(255) | NOT NULL                | ✅       |
+| `sla_hours`  | INTEGER      | NOT NULL, CHECK > 0     | ✅       |
+| `created_at` | TIMESTAMPTZ  | NOT NULL, DEFAULT now() | ✅       |
 
 **Validation**: Aligned with PR. `sla_hours` INTEGER with CHECK > 0 ensures positive SLA.
 
@@ -45,15 +45,15 @@ This document summarizes the modeling decisions validated with domain-modeling f
 
 ## Migration 003: `exams`
 
-| Column | Type | Constraints | Decision |
-|--------|------|-------------|----------|
-| `id` | UUID | PK, `gen_random_uuid()` | ✅ |
-| `patient_id` | UUID | NOT NULL, FK → patients(id) ON DELETE RESTRICT | ✅ |
-| `exam_type_id` | UUID | NOT NULL, FK → exam_types(id) ON DELETE RESTRICT | ✅ |
-| `status` | VARCHAR(20) | NOT NULL, DEFAULT 'RECEIVED', CHECK IN ('RECEIVED','IN_ANALYSIS','REPORT_CHECKED','SENT') | ✅ |
-| `requested_at` | TIMESTAMPTZ | NOT NULL, DEFAULT now() | ✅ |
-| `updated_at` | TIMESTAMPTZ | NOT NULL, DEFAULT now() | ✅ |
-| `created_by` | UUID | **NULL**, FK → users(id) **ON DELETE SET NULL** | ⚠️ Changed: nullable + SET NULL |
+| Column         | Type        | Constraints                                                                               | Decision                        |
+| -------------- | ----------- | ----------------------------------------------------------------------------------------- | ------------------------------- |
+| `id`           | UUID        | PK, `gen_random_uuid()`                                                                   | ✅                              |
+| `patient_id`   | UUID        | NOT NULL, FK → patients(id) ON DELETE RESTRICT                                            | ✅                              |
+| `exam_type_id` | UUID        | NOT NULL, FK → exam_types(id) ON DELETE RESTRICT                                          | ✅                              |
+| `status`       | VARCHAR(20) | NOT NULL, DEFAULT 'RECEIVED', CHECK IN ('RECEIVED','IN_ANALYSIS','REPORT_CHECKED','SENT') | ✅                              |
+| `requested_at` | TIMESTAMPTZ | NOT NULL, DEFAULT now()                                                                   | ✅                              |
+| `updated_at`   | TIMESTAMPTZ | NOT NULL, DEFAULT now()                                                                   | ✅                              |
+| `created_by`   | UUID        | **NULL**, FK → users(id) **ON DELETE SET NULL**                                           | ⚠️ Changed: nullable + SET NULL |
 
 **Indexes**:
 
@@ -70,14 +70,14 @@ This document summarizes the modeling decisions validated with domain-modeling f
 
 ## Migration 004: `exam_status_history`
 
-| Column | Type | Constraints | Decision |
-|--------|------|-------------|----------|
-| `id` | UUID | PK, `gen_random_uuid()` | ✅ |
-| `exam_id` | UUID | NOT NULL, FK → exams(id) ON DELETE CASCADE | ✅ |
-| `from_status` | VARCHAR(20) | **NULL**, CHECK IN (...) | ⚠️ Changed: **nullable** for initial row |
-| `to_status` | VARCHAR(20) | NOT NULL, CHECK IN (...) | ✅ |
-| `changed_by` | UUID | NOT NULL, FK → users(id) ON DELETE RESTRICT | ✅ |
-| `changed_at` | TIMESTAMPTZ | NOT NULL, DEFAULT now() | ✅ |
+| Column        | Type        | Constraints                                 | Decision                                 |
+| ------------- | ----------- | ------------------------------------------- | ---------------------------------------- |
+| `id`          | UUID        | PK, `gen_random_uuid()`                     | ✅                                       |
+| `exam_id`     | UUID        | NOT NULL, FK → exams(id) ON DELETE CASCADE  | ✅                                       |
+| `from_status` | VARCHAR(20) | **NULL**, CHECK IN (...)                    | ⚠️ Changed: **nullable** for initial row |
+| `to_status`   | VARCHAR(20) | NOT NULL, CHECK IN (...)                    | ✅                                       |
+| `changed_by`  | UUID        | NOT NULL, FK → users(id) ON DELETE RESTRICT | ✅                                       |
+| `changed_at`  | TIMESTAMPTZ | NOT NULL, DEFAULT now()                     | ✅                                       |
 
 **Additional Constraints**:
 
@@ -97,12 +97,12 @@ This document summarizes the modeling decisions validated with domain-modeling f
 
 ## Seed Script - Fictitious Data (Critical Rule: 100% fictitious)
 
-| Entity | Quantity | Details |
-|--------|----------|---------|
-| Users | 2 | 1 ATTENDANT, 1 MANAGER |
-| Patients | 20 | Fictitious names and codes (e.g., `PAC-0001`, `PAC-0002`...) |
-| Exam Types | 5 | Generic names + varied sla_hours (e.g., 4h, 8h, 24h, 48h, 72h) |
-| Exams | 200 | Distributed across patients/types, `requested_at` varied (last 30 days), ~20% overdue (status ≠ SENT and requested_at + sla_hours < now()) |
+| Entity     | Quantity | Details                                                                                                                                    |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Users      | 2        | 1 ATTENDANT, 1 MANAGER                                                                                                                     |
+| Patients   | 20       | Fictitious names and codes (e.g., `PAC-0001`, `PAC-0002`...)                                                                               |
+| Exam Types | 5        | Generic names + varied sla_hours (e.g., 4h, 8h, 24h, 48h, 72h)                                                                             |
+| Exams      | 200      | Distributed across patients/types, `requested_at` varied (last 30 days), ~20% overdue (status ≠ SENT and requested_at + sla_hours < now()) |
 
 ---
 

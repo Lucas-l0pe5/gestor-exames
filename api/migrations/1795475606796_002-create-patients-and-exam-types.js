@@ -9,47 +9,47 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('patients', {
+  pgm.createTable("patients", {
     id: {
-      type: 'uuid',
+      type: "uuid",
       primaryKey: true,
-      default: pgm.func('gen_random_uuid()'),
+      default: pgm.func("gen_random_uuid()"),
     },
     name: {
-      type: 'varchar(255)',
+      type: "varchar(255)",
       notNull: true,
     },
     code: {
-      type: 'varchar(50)',
+      type: "varchar(50)",
       notNull: true,
       unique: true,
     },
     created_at: {
-      type: 'timestamptz',
+      type: "timestamptz",
       notNull: true,
-      default: pgm.func('now()'),
+      default: pgm.func("now()"),
     },
   });
 
-  pgm.createTable('exam_types', {
+  pgm.createTable("exam_types", {
     id: {
-      type: 'uuid',
+      type: "uuid",
       primaryKey: true,
-      default: pgm.func('gen_random_uuid()'),
+      default: pgm.func("gen_random_uuid()"),
     },
     name: {
-      type: 'varchar(255)',
+      type: "varchar(255)",
       notNull: true,
     },
     sla_hours: {
-      type: 'integer',
+      type: "integer",
       notNull: true,
-      check: 'sla_hours > 0',
+      check: "sla_hours > 0",
     },
     created_at: {
-      type: 'timestamptz',
+      type: "timestamptz",
       notNull: true,
-      default: pgm.func('now()'),
+      default: pgm.func("now()"),
     },
   });
 };
@@ -60,6 +60,6 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('exam_types');
-  pgm.dropTable('patients');
+  pgm.dropTable("exam_types");
+  pgm.dropTable("patients");
 };

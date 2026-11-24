@@ -13,3 +13,4 @@
 - Escopos válidos: `api`, `web`, `reports`, `infra`, `db`, `docs`[cite: 1].
 - Todo código novo exige testes automatizados passando antes de concluir a tarefa[cite: 1].
 - Planeje a implementação antes de sair editando arquivos e mantenha as mudanças enxutas (< 400 linhas por PR)[cite: 1].
+- **Formatação**: antes de commitar, rode `npx prettier --write` nos arquivos alterados/criados (inclui Markdown, YAML, JSON, TS/JS). O CI falha se `npm run format:check` não passar.
