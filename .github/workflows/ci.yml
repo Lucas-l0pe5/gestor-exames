@@ -16,6 +16,20 @@ jobs:
     defaults:
       run:
         working-directory: api
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: gestor
+          POSTGRES_PASSWORD: troque_esta_senha
+          POSTGRES_DB: gestor_exames
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gestor"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -27,4 +41,9 @@ jobs:
       - run: npm run lint
       - run: npm run format:check
       - run: npm run build
+      - run: npm run migrate:up
+        env:
+          DATABASE_URL: postgresql://gestor:troque_esta_senha@localhost:5432/gestor_exames
       - run: npm test
+        env:
+          DATABASE_URL: postgresql://gestor:troque_esta_senha@localhost:5432/gestor_exames
